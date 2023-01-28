@@ -1,35 +1,44 @@
-CREATE TABLE user (
+CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(80) NOT NULL UNIQUE,
     nickname VARCHAR(32) NOT NULL UNIQUE,
     password CHAR(32) NOT NULL,
-    region_id INT NOT NULL REFERENCES region(region_id)
+    region_id INT NOT NULL REFERENCES regions(region_id)
 );
 
-CREATE TABLE review (
-    user_id INT PRIMARY KEY REFERENCES user(user_id)
+CREATE TABLE reviews (
+    user_id INT REFERENCES users(user_id)
                                 ON DELETE CASCADE,
-    game_id INT PRIMARY KEY REFERENCES game(game_id) 
+    game_id INT REFERENCES games(game_id) 
                                 ON DELETE CASCADE,
-    rating SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 10)
+    rating SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 10),
+    PRIMARY KEY(user_id, game_id)
 );
 
 CREATE TYPE DISCOUNT AS (
-    percentage NUMERIC(1,2) NOT NULL,
-    start_date TIMESTAMPZ NOT NULL,
-    end_date TIMESTAMPZ NOT NULL
+    percentage NUMERIC(1,2),
+    start_date TIMESTAMP WITH TIME ZONE,
+    end_date TIMESTAMP WITH TIME ZONE
 );
 
-CREATE TABLE price (
-    region_id INT PRIMARY KEY REFERENCES region(region_id)
+CREATE DOMAIN DISCOUNT_DOMAIN as DISCOUNT 
+check (
+  (value).percentage is not null and 
+  (value).start_date is not null and
+  (value).end_date is not null
+);
+
+CREATE TABLE prices (
+    region_id INT REFERENCES regions(region_id)
                                     ON DELETE CASCADE,
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
+    product_id INT REFERENCES products(product_id)
                                     ON DELETE CASCADE,
     price numeric(5,2) NOT NULL CHECK (price >= 0),
-    discount DISCOUNT
+    discount DISCOUNT,
+    PRIMARY KEY(region_id, product_id)
 );
 
-CREATE TABLE region (
+CREATE TABLE regions (
     region_id SERIAL PRIMARY KEY,
     currency_symbol VARCHAR(2) NOT NULL,
     currency_name VARCHAR(20) NOT NULL,
@@ -39,7 +48,7 @@ CREATE TABLE region (
 CREATE TYPE REFUND_TYPE AS ENUM ('REFUNDABLE', 'SELF_REFUNDABLE', 'NON_REFUNDABLE');
 CREATE TYPE PRODUCT_TYPE AS ENUM ('GAME', 'ADDON', 'DEMO', 'EDITION', 'BUNDLE');
 
-CREATE TABLE product (
+CREATE TABLE products (
     product_id SERIAL PRIMARY KEY,
     release_date DATE NOT NULL,
     initial_release_date DATE,
@@ -52,108 +61,104 @@ CREATE TABLE product (
 
 CREATE TYPE MEDIA_TYPE AS ENUM ('IMAGE', 'VIDEO');
 
-CREATE TABLE media (
-    order INT PRIMARY KEY check (order >= 0),
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
+CREATE TABLE medias (
+    media_order INT check (media_order >= 0),
+    product_id INT REFERENCES products(product_id)
                                     ON DELETE CASCADE,
     url VARCHAR(200) NOT NULL,
     media_type MEDIA_TYPE NOT NULL,
+    PRIMARY KEY(media_order, product_id)
 );
 
-CREATE TABLE bundle (
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
+CREATE TABLE bundles (
+    product_id INT PRIMARY KEY REFERENCES products(product_id)
                                     ON DELETE CASCADE
 );
 
-CREATE TABLE package (
-    product_id INT REFERENCES product(product_id)
+CREATE TABLE packages (
+    product_id INT REFERENCES products(product_id)
                         ON DELETE CASCADE,
-    bundle_id INT REFERENCES bundle(product_id)
-                        ON DELETE CASCADE
+    bundle_id INT REFERENCES bundles(product_id)
+                        ON DELETE CASCADE,
+    PRIMARY KEY(product_id, bundle_id)
 );
 
-CREATE TABLE game (
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
-                                    ON DELETE CASCADE,
+CREATE TABLE games (
     game_id SERIAL PRIMARY KEY,
+    product_id INT NOT NULL REFERENCES products(product_id)
+                                    ON DELETE CASCADE,
     developer VARCHAR(200) NOT NULL,
     publisher VARCHAR(200) NOT NULL,
-    social_newtworks VARCHAR(200) ARRAY[]
+    social_newtworks VARCHAR(200)[],
     laucher_name VARCHAR(100),
-    language VARCHAR(50) ARRAY[] NOT NULL CHECK (array_length(language, int) > 0)
+    languages VARCHAR(50)[] NOT NULL CHECK (array_length(languages, 1) > 0)
 );
 
-CREATE TABLE genre (
+CREATE TABLE genres (
     genre_id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE category (
-    genre_id INT PRIMARY KEY REFERENCES genre(genre_id)
+CREATE TABLE categories (
+    genre_id INT REFERENCES genres(genre_id)
                                 ON DELETE CASCADE,
-    game_id INT PRIMARY KEY REFERENCES game(game_id)
-                                ON DELETE CASCADE
+    game_id INT REFERENCES games(game_id)
+                                ON DELETE CASCADE,
+    PRIMARY KEY(genre_id, game_id)
 );
 
-CREATE TABLE feature (
+CREATE TABLE features (
     feature_id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE classification (
-    feature_id INT PRIMARY KEY REFERENCES feature(feature_id)
+CREATE TABLE classifications (
+    feature_id INT REFERENCES features(feature_id)
                                 ON DELETE CASCADE,
-    game_id INT PRIMARY KEY REFERENCES game(game_id)
-                                ON DELETE CASCADE
+    game_id INT REFERENCES games(game_id)
+                                ON DELETE CASCADE,
+    PRIMARY KEY(feature_id, game_id)
 );
 
 CREATE TYPE ACHIEVEMENT_CATEGORY AS ENUM ('GOLD', 'SILVER', 'BRONZE');
 
-CREATE TABLE achievement (
-    name VARCHAR(200) PRIMARY KEY,
-    game_id INT PRIMARY KEY REFERENCES game(game_id)
+CREATE TABLE achievements (
+    name VARCHAR(200),
+    game_id INT REFERENCES games(game_id)
                                 ON DELETE CASCADE,
     description VARCHAR(200) NOT NULL,
     xp INT NOT NULL CHECK (xp >= 0 AND xp <= 1000),
-    category ACHIEVEMENT_CATEGORY NOT NULL
+    category ACHIEVEMENT_CATEGORY NOT NULL,
+    PRIMARY KEY(name, game_id)
 );
-
--- CREATE TYPE CONTENT_TYPE AS ENUM ('ADDON', 'DEMO', 'EDITION');
-
--- CREATE TABLE content (
---     product_id INT PRIMARY KEY REFERENCES product(product_id)
---                                     ON DELETE CASCADE,
---     content_type CONTENT_TYPE NOT NULL,
---     duration INTERVAL,
---     addon_type ADDON_TYPE,
---     game_id INT NOT NULL REFERENCES game(game_id)
--- );
 
 CREATE TYPE ADDON_TYPE AS ENUM ('BOOK', 'GAME_ADDON', 'SOUNDTRACK', 'VIDEO');
-CREATE TABLE addon (
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
+
+CREATE TABLE addons (
+    product_id INT PRIMARY KEY REFERENCES products(product_id)
                                     ON DELETE CASCADE,
     addon_type ADDON_TYPE NOT NULL,
-    game_id INT NOT NULL REFERENCES game(game_id)
+    game_id INT NOT NULL REFERENCES games(game_id)
 );
 
-CREATE TABLE demo (
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
+CREATE TABLE demos (
+    product_id INT PRIMARY KEY REFERENCES products(product_id)
                                     ON DELETE CASCADE,
     duration INTERVAL,
-    game_id INT NOT NULL REFERENCES game(game_id)
+    game_id INT NOT NULL REFERENCES games(game_id)
 );
 
-CREATE TABLE edition (
-    product_id INT PRIMARY KEY REFERENCES product(product_id)
+CREATE TABLE editions (
+    product_id INT PRIMARY KEY REFERENCES products(product_id)
                                     ON DELETE CASCADE,
-    game_id INT NOT NULL REFERENCES game(game_id)
+    game_id INT NOT NULL REFERENCES games(game_id)
 );
 
-CREATE TABLE requirement (
-    os VARCHAR(50) PRIMARY KEY,
-    game_id INT PRIMARY KEY REFERENCES game(game_id)
+CREATE TABLE requirements (
+    os VARCHAR(50),
+    game_id INT REFERENCES games(game_id)
                                 ON DELETE CASCADE,
     minimum JSON NOT NULL,
-    recommended JSON NOT NULL
+    recommended JSON NOT NULL,
+    PRIMARY KEY(os, game_id)
 );
