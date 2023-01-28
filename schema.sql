@@ -1,166 +1,139 @@
-
---TODO: review auto-generated tables
-CREATE TABLE Genre (
-    genre_id INT PRIMARY KEY,
-    name CHARACTER
+CREATE TABLE user (
+    user_id SERIAL PRIMARY KEY,
+    email VARCHAR(80) NOT NULL UNIQUE,
+    nickname VARCHAR(32) NOT NULL UNIQUE,
+    password CHAR(32) NOT NULL,
+    region_id INT NOT NULL REFERENCES region(region_id)
 );
 
-CREATE TABLE Feature (
-    feature_id INT PRIMARY KEY,
-    name CHARACTER
+CREATE TABLE review (
+    user_id INT PRIMARY KEY REFERENCES user(user_id)
+                                ON DELETE CASCADE,
+    game_id INT PRIMARY KEY REFERENCES game(game_id) 
+                                ON DELETE CASCADE,
+    rating SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 10)
 );
 
-CREATE TABLE User (
-    user_id INT,
-    email CHARACTER,
-    nickname CHARACTER,
-    password CHARACTER,
-    fk_Region_region_id INT,
-    PRIMARY KEY (user_id, email, nickname)
+CREATE TYPE DISCOUNT AS (
+    percentage NUMERIC(1,2) NOT NULL,
+    start_date TIMESTAMPZ NOT NULL,
+    end_date TIMESTAMPZ NOT NULL
 );
 
-CREATE TABLE Region (
-    region_id INT PRIMARY KEY,
-    currency_symbol CHARACTER,
-    currency_name CHARACTER,
-    name CHARACTER
+CREATE TABLE price (
+    region_id INT PRIMARY KEY REFERENCES region(region_id)
+                                    ON DELETE CASCADE,
+    product_id INT PRIMARY KEY REFERENCES product(product_id)
+                                    ON DELETE CASCADE,
+    price numeric(5,2),
+    discount DISCOUNT
 );
 
-CREATE TABLE Product (
+CREATE TABLE region (
+    region_id SERIAL PRIMARY KEY,
+    currency_symbol VARCHAR(2) NOT NULL,
+    currency_name VARCHAR(20) NOT NULL,
+    name VARCHAR(32) NOT NULL
+);
+
+CREATE TYPE REFUND_TYPE AS ENUM ('REFUNDABLE', 'SELF_REFUNDABLE', 'NON_REFUNDABLE');
+
+CREATE TABLE product (
+    product_id SERIAL PRIMARY KEY,
     release_date DATE,
     initial_release_date DATE,
-    cover_img CHARACTER,
-    product_id INT PRIMARY KEY,
-    refund_type CHARACTER,
-    description CHARACTER,
-    title CHARACTER
+    cover_img VARCHAR(200),
+    refund_type REFUND_TYPE,
+    description VARCHAR(2000),
+    title VARCHAR(100)
 );
 
-CREATE TABLE Media (
+CREATE TYPE MEDIA_TYPE AS ENUM ('IMAGE', 'VIDEO');
+
+CREATE TABLE media (
     order INT PRIMARY KEY,
-    url CHARACTER,
-    type CHARACTER,
-    fk_Product_product_id INT
+    product_id INT PRIMARY KEY REFERENCES product(product_id)
+                                    ON DELETE CASCADE,
+    url VARCHAR(200),
+    media_type MEDIA_TYPE,
 );
 
-CREATE TABLE Achievement (
-    name CHARACTER PRIMARY KEY,
-    description CHARACTER,
+CREATE TABLE game (
+    product_id INT PRIMARY KEY REFERENCES product(product_id)
+                                    ON DELETE CASCADE,
+    game_id SERIAL PRIMARY KEY,
+    developer VARCHAR(200),
+    publisher VARCHAR(200),
+    social_newtwork VARCHAR(200) ARRAY[]
+    laucher_name VARCHAR(100),
+    language VARCHAR(50) ARRAY[]
+);
+
+CREATE TABLE genre (
+    genre_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE category (
+    genre_id INT PRIMARY KEY REFERENCES genre(genre_id)
+                                ON DELETE CASCADE,
+    game_id INT PRIMARY KEY REFERENCES game(game_id)
+                                ON DELETE CASCADE
+);
+
+CREATE TABLE feature (
+    feature_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE classification (
+    feature_id INT PRIMARY KEY REFERENCES feature(feature_id)
+                                ON DELETE CASCADE,
+    game_id INT PRIMARY KEY REFERENCES game(game_id)
+                                ON DELETE CASCADE
+);
+
+CREATE TYPE ACHIEVEMENT_CATEGORY AS ENUM ('GOLD', 'SILVER', 'BRONZE');
+
+CREATE TABLE achievement (
+    name VARCHAR(200) PRIMARY KEY,
+    game_id INT PRIMARY KEY REFERENCES game(game_id)
+                                ON DELETE CASCADE,
+    description VARCHAR(200),
     xp INT,
-    category CHARACTER,
-    fk_Game_fk_Product_product_id INT
+    category ACHIEVEMENT_CATEGORY
 );
 
-CREATE TABLE Content (
-    fk_Product_product_id INT PRIMARY KEY,
-    type CHARACTER,
-    duration DATE,
-    Content_TIPO INT,
-    fk_Game_fk_Product_product_id INT
+CREATE TYPE CONTENT_TYPE AS ENUM ('ADDON', 'DEMO', 'EDITION');
+CREATE TYPE ADDON_TYPE AS ENUM ('BOOK', 'GAME_ADDON', 'SOUNDTRACK', 'VIDEO');
+
+CREATE TABLE content (
+    content_id SERIAL PRIMARY KEY,
+    product_id INT PRIMARY KEY REFERENCES product(product_id)
+                                    ON DELETE CASCADE,
+    content_type CONTENT_TYPE,
+    duration INTERVAL,
+    addon_type ADDON_TYPE,
+    game_id INT NOT NULL REFERENCES game(game_id)
+                            ON DELETE CASCADE
 );
 
-CREATE TABLE Specification_Game (
-    specification_id INT,
-    fk_language_language_PK INT,
-    laucher_name CHARACTER,
-    publisher CHARACTER,
-    fk_social_networks_social_networks_PK INT,
-    developer CHARACTER,
-    fk_Product_product_id INT,
-    PRIMARY KEY (specification_id, fk_Product_product_id)
+CREATE TABLE requirement (
+    os VARCHAR(50) PRIMARY KEY,
+    game_id INT PRIMARY KEY REFERENCES game(game_id)
+                                ON DELETE CASCADE,
+    minimum JSON,
+    recommended JSON
 );
 
-CREATE TABLE Requirement (
-    os CHARACTER PRIMARY KEY,
-    min_requirement CHARACTER,
-    recommended_req CHARACTER,
-    fk_Specification_Game_specification_id INT
+--TODO: check
+CREATE TABLE bundle (
 );
 
-CREATE TABLE Bundle (
+CREATE TABLE package (
+    product_id INT REFERENCES product(product_id)
+                        ON DELETE CASCADE
 );
-
-CREATE TABLE social_networks (
-    social_networks_PK INT NOT NULL PRIMARY KEY,
-    social_networks CHARACTER
-);
-
-CREATE TABLE language (
-    language_PK INT NOT NULL PRIMARY KEY,
-    language CHARACTER
-);
-
-CREATE TABLE Price (
-    fk_Region_region_id INT,
-    fk_Product_product_id INT,
-    price FLOAT,
-    percentage FLOAT,
-    start_date DATE,
-    end_date DATE
-);
-
-CREATE TABLE Category (
-    fk_Genre_genre_id INT,
-    fk_Game_fk_Product_product_id INT
-);
-
-CREATE TABLE Classification (
-    fk_Feature_feature_id INT,
-    fk_Game_fk_Product_product_id INT
-);
-
-CREATE TABLE Review (
-    fk_User_user_id INT,
-    fk_User_email CHARACTER,
-    fk_User_nickname CHARACTER,
-    fk_Game_fk_Product_product_id INT,
-    rating INT
-);
-
-CREATE TABLE Package (
-    fk_Product_product_id INT
-);
- 
-ALTER TABLE User ADD CONSTRAINT FK_User_2
-    FOREIGN KEY (fk_Region_region_id)
-    REFERENCES Region (region_id)
-    ON DELETE CASCADE;
- 
-ALTER TABLE Media ADD CONSTRAINT FK_Media_2
-    FOREIGN KEY (fk_Product_product_id)
-    REFERENCES Product (product_id)
-    ON DELETE RESTRICT;
- 
-ALTER TABLE Achievement ADD CONSTRAINT FK_Achievement_2
-    FOREIGN KEY (fk_Game_fk_Product_product_id)
-    REFERENCES ??? (???);
- 
-ALTER TABLE Content ADD CONSTRAINT FK_Content_2
-    FOREIGN KEY (fk_Product_product_id)
-    REFERENCES Product (product_id)
-    ON DELETE CASCADE;
- 
-ALTER TABLE Content ADD CONSTRAINT FK_Content_3
-    FOREIGN KEY (fk_Game_fk_Product_product_id)
-    REFERENCES ??? (???);
- 
-ALTER TABLE Specification_Game ADD CONSTRAINT FK_Specification_Game_2
-    FOREIGN KEY (fk_language_language_PK)
-    REFERENCES language (language_PK)
-    ON DELETE NO ACTION;
- 
-ALTER TABLE Specification_Game ADD CONSTRAINT FK_Specification_Game_3
-    FOREIGN KEY (fk_social_networks_social_networks_PK)
-    REFERENCES social_networks (social_networks_PK);
- 
-ALTER TABLE Specification_Game ADD CONSTRAINT FK_Specification_Game_4
-    FOREIGN KEY (fk_Product_product_id)
-    REFERENCES Product (product_id);
- 
-ALTER TABLE Requirement ADD CONSTRAINT FK_Requirement_2
-    FOREIGN KEY (fk_Specification_Game_specification_id, ???)
-    REFERENCES Specification_Game (specification_id, ???)
-    ON DELETE RESTRICT;
  
 ALTER TABLE Price ADD CONSTRAINT FK_Price_1
     FOREIGN KEY (fk_Region_region_id)
