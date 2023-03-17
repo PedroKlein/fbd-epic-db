@@ -3,7 +3,7 @@ CREATE TABLE regions (
     region_id SERIAL PRIMARY KEY,
     currency_symbol VARCHAR(2) NOT NULL,
     currency_name VARCHAR(20) NOT NULL,
-    name VARCHAR(32) NOT NULL
+    name VARCHAR(32) NOT NULL UNIQUE
 );
 
 
@@ -24,7 +24,7 @@ CREATE TABLE products (
     cover_img VARCHAR(200) NOT NULL,
     refund_type REFUND_TYPE NOT NULL,
     description VARCHAR(2000) NOT NULL,
-    title VARCHAR(100) NOT NULL,
+    title VARCHAR(100) NOT NULL UNIQUE,
     type PRODUCT_TYPE NOT NULL
 );
 
@@ -60,6 +60,23 @@ CREATE TABLE prices (
     PRIMARY KEY(region_id, product_id)
 );
 
+CREATE TABLE wishlist (
+    user_id INT REFERENCES users(user_id)
+                                ON DELETE CASCADE,
+    product_id INT REFERENCES products(product_id) 
+                                ON DELETE CASCADE,
+    PRIMARY KEY(user_id, product_id)
+);
+
+CREATE TABLE purchases (
+    user_id INT REFERENCES users(user_id)
+                                ON DELETE CASCADE,
+    product_id INT REFERENCES products(product_id) 
+                                ON DELETE CASCADE,
+    purchase_date DATE,
+    PRIMARY KEY(user_id, product_id)
+);
+
 CREATE TABLE bundles (
     product_id INT PRIMARY KEY REFERENCES products(product_id)
                                     ON DELETE CASCADE
@@ -90,6 +107,15 @@ CREATE TABLE reviews (
     game_id INT REFERENCES games(game_id) 
                                 ON DELETE CASCADE,
     rating SMALLINT NOT NULL CHECK (rating >= 0 AND rating <= 10),
+    PRIMARY KEY(user_id, game_id)
+);
+
+CREATE TABLE library (
+    user_id INT REFERENCES users(user_id)
+                                ON DELETE CASCADE,
+    game_id INT REFERENCES games(game_id) 
+                                ON DELETE CASCADE,
+    favourite BOOLEAN DEFAULT false,
     PRIMARY KEY(user_id, game_id)
 );
 
@@ -128,6 +154,15 @@ CREATE TABLE achievements (
     xp INT NOT NULL CHECK (xp >= 0 AND xp <= 1000),
     category ACHIEVEMENT_CATEGORY NOT NULL,
     PRIMARY KEY(name, game_id)
+);
+
+CREATE TABLE trophies (
+    user_id INT REFERENCES users(user_id)
+                                ON DELETE CASCADE,
+    game_id INT,
+    name VARCHAR(200),
+    PRIMARY KEY(user_id, game_id, name),
+    FOREIGN KEY (game_id, name) REFERENCES achievements(game_id, name)
 );
 
 CREATE TYPE ADDON_TYPE AS ENUM ('BOOK', 'GAME_ADDON', 'SOUNDTRACK', 'VIDEO');
@@ -224,7 +259,21 @@ VALUES
     (1, 1, 25.50, NULL),
     (1, 2, 99.99, ROW(0.80, '2022-10-10', '2022-10-11')),
     (1, 3, 65.20, ROW(0.50, '2022-10-2', '2022-10-8'));
-    
+
+INSERT INTO 
+    wishlist (user_id, product_id)
+VALUES
+    (1, 4),
+    (1, 5),
+    (1, 6);
+
+INSERT INTO 
+    purchases (user_id, product_id, purchase_date)
+VALUES
+    (1, 1, '2023-01-20'),
+    (1, 2, '2023-02-05'),
+    (1, 3, '2023-03-17');
+
 INSERT INTO 
     bundles (product_id)
 VALUES
@@ -252,6 +301,13 @@ VALUES
     (1, 1, 10),
     (1, 2, 8),
     (1, 3, 1);
+
+INSERT INTO 
+    library (user_id, game_id, favourite)
+VALUES
+    (1, 1, true),
+    (1, 2, false),
+    (1, 3, false);
     
 INSERT INTO 
     categories (genre_id, game_id)
@@ -280,6 +336,13 @@ VALUES
     ('AchievementTest1', 1, 'Comple this test', 200, 'SILVER'),
     ('AchievementTest1', 2, 'Comple this test', 400, 'GOLD'),
     ('AchievementTest2', 1, 'Comple this test', 100, 'BRONZE');
+
+INSERT INTO 
+    trophies (name, game_id, user_id)
+VALUES
+    ('AchievementTest1', 1, 1),
+    ('AchievementTest1', 2, 1),
+    ('AchievementTest2', 1, 1);
 
 INSERT INTO 
     genres (name)
