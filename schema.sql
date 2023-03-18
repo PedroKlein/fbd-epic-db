@@ -73,7 +73,7 @@ CREATE TABLE purchases (
                                 ON DELETE CASCADE,
     product_id INT REFERENCES products(product_id) 
                                 ON DELETE CASCADE,
-    purchase_date DATE,
+    purchase_date DATE NOT NULL DEFAULT CURRENT_DATE,
     PRIMARY KEY(user_id, product_id)
 );
 
@@ -257,8 +257,22 @@ INSERT INTO
     prices (region_id, product_id, price, discount)
 VALUES
     (1, 1, 25.50, NULL),
-    (1, 2, 99.99, ROW(0.80, '2022-10-10', '2022-10-11')),
-    (1, 3, 65.20, ROW(0.50, '2022-10-2', '2022-10-8'));
+    (1, 2, 99.99, ROW(0.80, '2023-03-10', '2022-06-11')),
+    (1, 3, 65.20, ROW(0.50, '2022-02-02', '2022-05-08')),
+    (2, 1, 50.99, NULL),
+    (2, 3, 30.20, NULL),
+    (1, 4, 9.99, NULL),
+    (1, 5, 5.20, NULL),
+    (1, 6, 9.99, NULL),
+    (1, 7, 0, NULL),
+    (1, 8, 0, NULL),
+    (1, 9, 0, NULL),
+    (1, 10, 109.99, NULL),
+    (1, 11, 85.20, NULL),
+    (1, 12, 119.99, NULL),
+    (1, 13, 165.20, NULL),
+    (1, 14, 199.99, NULL),
+    (1, 15, 65.20, NULL);
 
 INSERT INTO 
     wishlist (user_id, product_id)
@@ -271,6 +285,7 @@ INSERT INTO
     purchases (user_id, product_id, purchase_date)
 VALUES
     (1, 1, '2023-01-20'),
+    (2, 1, '2023-01-21'),
     (1, 2, '2023-02-05'),
     (1, 3, '2023-03-17');
 
@@ -284,9 +299,13 @@ VALUES
 INSERT INTO 
     packages (product_id, bundle_id)
 VALUES
-    (1, 1),
-    (1, 2),
-    (1, 3);
+    (1, 13),
+    (2, 13),
+    (3, 13),
+    (4, 14),
+    (5, 14),
+    (1, 15),
+    (3, 15);
 
 INSERT INTO 
     games (product_id, developer, publisher, social_newtworks, laucher_name, languages)
@@ -299,6 +318,7 @@ INSERT INTO
     reviews (user_id, game_id, rating)
 VALUES
     (1, 1, 10),
+    (2, 1, 4),
     (1, 2, 8),
     (1, 3, 1);
 
@@ -307,14 +327,8 @@ INSERT INTO
 VALUES
     (1, 1, true),
     (1, 2, false),
-    (1, 3, false);
-    
-INSERT INTO 
-    categories (genre_id, game_id)
-VALUES
-    (1, 1),
-    (2, 2),
-    (3, 3);
+    (1, 3, false),
+    (2, 1, true);
     
 INSERT INTO 
     features (name)
@@ -326,9 +340,10 @@ VALUES
 INSERT INTO 
     classifications (feature_id, game_id)
 VALUES
-    (1, 1),
-    (2, 2),
-    (3, 3);
+    (2, 1),
+    (3, 1),
+    (1, 2),
+    (2, 3);
     
 INSERT INTO 
     achievements (name, game_id, description, xp, category)
@@ -350,6 +365,13 @@ VALUES
     ('Action'),
     ('RPG'),
     ('Sport');
+
+INSERT INTO 
+    categories (genre_id, game_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3);
     
 INSERT INTO 
     addons (product_id, addon_type, game_id)
