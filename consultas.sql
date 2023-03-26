@@ -19,17 +19,19 @@ SELECT title, cover_img, favourite
 FROM users NATURAL JOIN library NATURAL JOIN games NATURAL JOIN products
 WHERE user_id = 1;
 
--- List the total price to buy all products listed in the catalog
-SELECT sum(price), title 
-FROM products NATURAL JOIN prices;
+-- List products that have the min value
+SELECT title
+FROM products NATURAL JOIN prices
+WHERE price = (SELECT MIN(price) FROM prices)
 
 
 -- consultas com groupby
 
 -- List the number of products of which type listed in the catalog 
-SELECT COUNT(products), type 
+SELECT type, COUNT(product_id)
 FROM products 
-GROUP BY type;
+GROUP BY type
+HAVING COUNT(product_id) > 0;
 
 -- List users with more than one game review
 SELECT nickname, count(reviews)
@@ -44,18 +46,18 @@ GROUP BY title
 HAVING COUNT(product_id) > 1;
 
 
--- List titles that are listed as more than one type of product
-SELECT sum(price), title 
-FROM products NATURAL JOIN prices
-GROUP BY product_id
-HAVING COUNT(product_id) > 1;
+-- List users that spent at least 50 dolars with products
+SELECT user_id, nickname, sum(price) 
+FROM users NATURAL JOIN library NATURAL JOIN games NATURAL JOIN products NATURAL JOIN prices
+GROUP BY user_id
+HAVING sum(price) > 50;
 
 
 -- List user that have at least one game in their librarys
-SELECT nickname, count(game_id) 
+SELECT user_id, count(game_id) 
 FROM users NATURAL JOIN library
-GROUP BY game_id
-HAVING COUNT(game_id) > 1;
+GROUP BY user_id
+HAVING COUNT(game_id) > 0;
 
 -- queries com subqueries
 
