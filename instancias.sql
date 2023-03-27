@@ -10,7 +10,9 @@ INSERT INTO
 VALUES
     ('test.user1@ufrgs.br','testUser1', '4229198dbf6ea910ecce0172e14e7a77', 1),
     ('test.user2@ufrgs.br','testUser2', '4229198dbf6ea910ecce0172e14e7a78', 2),
-    ('test.user3@ufrgs.br','testUser3', '4229198dbf6ea910ecce0172e14e7a79', 3);
+    ('test.user3@ufrgs.br','testUser3', '4229198dbf6ea910ecce0172e14e7a79', 3),
+    ('test.user4@ufrgs.br','testUser4', '4229198dbf6ea910ecce0172e14e7a80', 1),
+    ('test.user5@ufrgs.br','testUser5', '4229198dbf6ea910ecce0172e14e7a81', 2);
     
 INSERT INTO 
     products (release_date, initial_release_date, cover_img, refund_type, description, title, type)
@@ -61,6 +63,7 @@ VALUES
     (1, 2, 99.99, ROW(0.80, '2023-03-10', '2023-06-11')),
     (1, 3, 65.20, ROW(0.50, '2023-02-02', '2023-05-08')),
     (2, 1, 50.99, NULL),
+    (3, 1, 70.99, NULL),
     (2, 3, 30.20, NULL),
     (1, 4, 9.99, NULL),
     (1, 5, 5.20, NULL),
@@ -88,7 +91,10 @@ VALUES
     (1, 1, '2023-01-20'),
     (2, 1, '2023-01-21'),
     (1, 2, '2023-02-05'),
-    (1, 3, '2023-03-17');
+    (1, 3, '2023-03-17'),
+    (4, 1, '2023-03-23'),
+    (5, 1, '2023-03-21'),
+    (3, 3, '2023-03-20');
 
 INSERT INTO 
     bundles (product_id)
@@ -129,7 +135,10 @@ VALUES
     (1, 1, true),
     (1, 2, false),
     (1, 3, false),
-    (2, 1, true);
+    (2, 1, true),
+    (4, 1, true),
+    (5, 1, true),
+    (3, 3, true);
     
 INSERT INTO 
     features (name)
