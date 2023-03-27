@@ -33,11 +33,18 @@ FROM products
 GROUP BY type
 HAVING COUNT(product_id) > 0;
 
--- List users with more than one game review
+-- List users that have made at least one review
 SELECT nickname, count(reviews)
 FROM users NATURAL JOIN reviews
 GROUP BY user_id
-HAVING count(reviews) > 1;
+HAVING count(reviews) >= 1;
+
+
+-- List products order by selling quantity of which region
+SELECT game_id, name, count(*)
+FROM users NATURAL JOIN regions NATURAL JOIN library
+GROUP BY (name,game_id)
+order by count(*) desc;
 
 -- List titles that are listed as more than one type of product
 SELECT COUNT(product_id), title 
