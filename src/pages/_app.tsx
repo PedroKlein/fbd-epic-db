@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { SWRConfig } from "swr";
 import { SWR_CONFIG } from "../configs/swr.config";
+import SideBar from "../layout/SideBar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,9 +15,10 @@ const inter = Inter({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SWRConfig value={SWR_CONFIG}>
-      <main className={`${inter.variable} font-sans`}>
+      <div className={`${inter.variable} font-sans flex flex-row`}>
+        <SideBar />
         <Component {...pageProps} />
-      </main>
+      </div>
     </SWRConfig>
   );
 }
