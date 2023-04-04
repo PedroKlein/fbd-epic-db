@@ -1,6 +1,8 @@
 import Head from "next/head";
+import useSWR from "swr";
 
 const Home: React.FC = () => {
+  const { data } = useSWR("/api/hello");
   return (
     <>
       <Head>
