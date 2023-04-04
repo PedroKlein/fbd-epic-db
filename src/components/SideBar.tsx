@@ -42,6 +42,7 @@ const SideBar: React.FC = () => {
         <ul className="space-y-2 font-medium">
           {ROUTES.map((route) => (
             <NavItem
+              key={route.path}
               name={route.name}
               path={route.path}
               withParams={route.withParams}

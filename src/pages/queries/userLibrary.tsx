@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ResultPage from "../../components/ResultPage";
 import useSWR from "swr";
-import { AverageRatingRes } from "../api/queries/averageRating";
 import ResultTable from "../../components/ResultTable";
 import { UserLibraryRes } from "../api/queries/userLibrary";
 
@@ -20,8 +19,8 @@ const UserLibraryPage: React.FC = () => {
 
   return (
     <ResultPage
-      title="Average Rating"
-      description="Gets all games with an avarage rating above the selected"
+      title="User Library"
+      description="Gets all games in a user's library."
     >
       <div className="flex flex-col gap-4">
         <form>
