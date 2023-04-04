@@ -1,11 +1,6 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-* {
-  transition: background 0.25s ease, color 0.25s ease;
-}
 
 @layer base {
   :root {

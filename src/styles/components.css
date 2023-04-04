@@ -28,7 +28,7 @@ h3 {
 
 input,
 textarea {
-  @apply p-2 rounded-lg bg-neutral text-default;
+  @apply p-2 rounded-lg bg-gray-800 text-default;
 }
 
 .input-container {

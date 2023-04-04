@@ -29,7 +29,7 @@ function ResultTable<T>({ data, headers }: TableProps<T>) {
               {Object.keys(headers).map((key) => (
                 <td key={key} className="px-6 py-4 text-center">
                   {/* @ts-ignore */}
-                  {row[key]}
+                  {row[key].toString()}
                 </td>
               ))}
             </tr>

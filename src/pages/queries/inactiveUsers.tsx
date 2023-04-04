@@ -3,21 +3,22 @@ import ResultPage from "../../components/ResultPage";
 import useSWR from "swr";
 import ResultTable from "../../components/ResultTable";
 import { TopSellerRes } from "../api/queries/topSeller";
+import { InactiveUsersRes } from "../api/queries/inactiveUsers";
 
-const TableHeader: { [K in keyof TopSellerRes]: string } = {
+const TableHeader: { [K in keyof InactiveUsersRes]: string } = {
   region_id: "Region ID",
   name: "Region Name",
-  product_id: "Product Id",
-  title: "Product Title",
+  user_id: "User Id",
+  nickname: "User Nickname",
 };
 
-const TopSellerPage: React.FC = () => {
-  const { data } = useSWR<TopSellerRes[]>(`/api/queries/topSeller`);
+const InactiveUsersPage: React.FC = () => {
+  const { data } = useSWR<InactiveUsersRes[]>(`/api/queries/inactiveUsers`);
 
   return (
     <ResultPage
-      title="Top Seller"
-      description="Gets the top seller product of each reagion"
+      title="Inactive Users"
+      description="Gets all users that didn't bought anything in the last month"
     >
       <div className="flex flex-col gap-4">
         {data && <ResultTable data={data} headers={TableHeader} />}
@@ -26,4 +27,4 @@ const TopSellerPage: React.FC = () => {
   );
 };
 
-export default TopSellerPage;
+export default InactiveUsersPage;

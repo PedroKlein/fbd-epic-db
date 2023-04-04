@@ -1,21 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import ResultPage from "../../components/ResultPage";
 import useSWR from "swr";
 import { AverageRatingRes } from "../api/queries/averageRating";
 import ResultTable from "../../components/ResultTable";
+import { UserLibraryRes } from "../api/queries/userLibrary";
 
-const TableHeader: { [K in keyof AverageRatingRes]: string } = {
-  game_id: "Game ID",
-  product_id: "Product ID",
+const TableHeader: { [K in keyof UserLibraryRes]: string } = {
   title: "Title",
-  average: "Average Rating",
+  cover_img: "Cover Image URL",
+  favourite: "Is Favourite?",
 };
 
-const AverageRatingPage: React.FC = () => {
-  const [rating, setRating] = useState(6);
+const UserLibraryPage: React.FC = () => {
+  const [userId, setUserId] = useState(1);
 
-  const { data } = useSWR<AverageRatingRes[]>(
-    `/api/queries/averageRating?rating=${rating}`
+  const { data } = useSWR<UserLibraryRes[]>(
+    `/api/queries/userLibrary?user_id=${userId}`
   );
 
   return (
@@ -26,18 +26,18 @@ const AverageRatingPage: React.FC = () => {
       <div className="flex flex-col gap-4">
         <form>
           <div className="input-container">
-            <label htmlFor="rating">Minimum Rating</label>
+            <label htmlFor="userId">User ID</label>
             <div className="flex flex-row gap-4">
               <input
                 className="w-80"
                 type="number"
-                value={rating}
-                id="rating"
-                name="rating"
-                onChange={(e) => setRating(+e.currentTarget.value)}
+                id="userId"
+                name="userId"
+                value={userId}
+                onChange={(e) => setUserId(+e.currentTarget.value)}
                 min={0}
                 max={10}
-                placeholder="Select a minimum rating..."
+                placeholder="Select a user id..."
                 required
               />
               {/* <button className="button-fill bg-primary" role="submit">
@@ -52,4 +52,4 @@ const AverageRatingPage: React.FC = () => {
   );
 };
 
-export default AverageRatingPage;
+export default UserLibraryPage;
