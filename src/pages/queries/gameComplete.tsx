@@ -1,27 +1,31 @@
 import React, { useState } from "react";
 import ResultPage from "../../components/ResultPage";
 import useSWR from "swr";
-import { AverageRatingRes } from "../api/queries/averageRating";
 import ResultTable from "../../components/ResultTable";
-import { UserLibraryRes } from "../api/queries/userLibrary";
-import { AchievementPercentageRes } from "../api/queries/achievementPercentage";
+import { GameCompleteRes } from "../api/queries/gameComplete";
 
-const TableHeader: { [K in keyof AchievementPercentageRes]: string } = {
-  name: "Achievement Name",
-  percentage: "Percentage of users",
+const TableHeader: { [K in keyof GameCompleteRes]: string } = {
+  game_id: "Game ID",
+  title: "Title",
+  developer: "Developer",
+  publisher: "Publisher",
+  feature_name: "Feature Name",
+  genre_name: "Genre Name",
+  achievement_name: "Achievement Name",
+  os: "OS Name",
 };
 
-const AchievementPercentagePage: React.FC = () => {
+const BundleProductsPage: React.FC = () => {
   const [gameId, setGameId] = useState(1);
 
-  const { data } = useSWR<AchievementPercentageRes[]>(
-    `/api/queries/achievementPercentage?game_id=${gameId}`
+  const { data } = useSWR<GameCompleteRes[]>(
+    `/api/queries/gameComplete?game_id=${gameId}`
   );
 
   return (
     <ResultPage
-      title="Achievement Percentage"
-      description="Gets the percetage of users that completed each achievement from a game"
+      title="Game Complete"
+      description="Gets all essential information about a game."
     >
       <div className="flex flex-col gap-4">
         <form>
@@ -36,13 +40,10 @@ const AchievementPercentagePage: React.FC = () => {
                 value={gameId}
                 onChange={(e) => setGameId(+e.currentTarget.value)}
                 min={1}
-                max={10}
+                max={3}
                 placeholder="Select a game id..."
                 required
               />
-              {/* <button className="button-fill bg-primary" role="submit">
-                Update
-              </button> */}
             </div>
           </div>
         </form>
@@ -52,4 +53,4 @@ const AchievementPercentagePage: React.FC = () => {
   );
 };
 
-export default AchievementPercentagePage;
+export default BundleProductsPage;

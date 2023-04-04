@@ -35,7 +35,7 @@ const AverageRatingPage: React.FC = () => {
                 id="rating"
                 name="rating"
                 onChange={(e) => setRating(+e.currentTarget.value)}
-                min={0}
+                min={1}
                 max={10}
                 placeholder="Select a minimum rating..."
                 required

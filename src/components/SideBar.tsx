@@ -11,13 +11,13 @@ const NavItem: React.FC<Routes> = ({ name, path, withParams }) => {
     <li>
       <Link
         href={path}
-        className={`flex items-center p-2 transition-all rounded-lg hover:bg-gray-700 ${
+        className={`flex flex-row items-center justify-between p-2 transition-all rounded-lg hover:bg-gray-700 ${
           isActive ? "bg-gray-500" : ""
         }`}
       >
         <span className="ml-3 text-sm">{name}</span>
         {withParams && (
-          <span className="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">
+          <span className="inline-flex px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">
             Param
           </span>
         )}

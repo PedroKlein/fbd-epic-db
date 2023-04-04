@@ -7,8 +7,8 @@ type TableProps<T> = {
 
 function ResultTable<T>({ data, headers }: TableProps<T>) {
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-h-[300px]">
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 max-h-[300px]">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
           <tr>
             {Object.values(headers).map((header) => (
@@ -29,7 +29,7 @@ function ResultTable<T>({ data, headers }: TableProps<T>) {
               {Object.keys(headers).map((key) => (
                 <td key={key} className="px-6 py-4 text-center">
                   {/* @ts-ignore */}
-                  {row[key].toString()}
+                  {row[key]?.toString() || "None"}
                 </td>
               ))}
             </tr>

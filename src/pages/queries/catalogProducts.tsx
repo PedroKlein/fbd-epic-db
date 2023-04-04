@@ -1,27 +1,34 @@
 import React, { useState } from "react";
 import ResultPage from "../../components/ResultPage";
 import useSWR from "swr";
-import { AverageRatingRes } from "../api/queries/averageRating";
 import ResultTable from "../../components/ResultTable";
 import { UserLibraryRes } from "../api/queries/userLibrary";
+import { CatalogProductsRes } from "../api/queries/catalogProducts";
 
-const TableHeader: { [K in keyof UserLibraryRes]: string } = {
-  title: "Title",
-  cover_img: "Cover Image URL",
-  favourite: "Is Favourite?",
+const TableHeader: { [K in keyof CatalogProductsRes]: string } = {
+  region_id: "Region ID",
+  currency_symbol: "Currency Symbol",
+  price: "Price",
+  net_price: "Net Price",
+  discount: "Discount",
+  end_date: "End Discount Date",
+  title: "Product Title",
+  type: "Product Type",
 };
 
-const UserLibraryPage: React.FC = () => {
+const CatalogProductsPage: React.FC = () => {
   const [userId, setUserId] = useState(1);
 
-  const { data } = useSWR<UserLibraryRes[]>(
-    `/api/queries/userLibrary?user_id=${userId}`
+  const { data } = useSWR<CatalogProductsRes[]>(
+    `/api/queries/catalogProducts?user_id=${userId}`
   );
+
+  console.log(data);
 
   return (
     <ResultPage
-      title="Average Rating"
-      description="Gets all games with an avarage rating above the selected"
+      title="Catalog products"
+      description="Gets all products in the catalog for a given user"
     >
       <div className="flex flex-col gap-4">
         <form>
@@ -49,4 +56,4 @@ const UserLibraryPage: React.FC = () => {
   );
 };
 
-export default UserLibraryPage;
+export default CatalogProductsPage;
