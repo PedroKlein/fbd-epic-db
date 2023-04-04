@@ -43,7 +43,7 @@ const CatalogProductsPage: React.FC = () => {
                 value={userId}
                 onChange={(e) => setUserId(+e.currentTarget.value)}
                 min={1}
-                max={10}
+                max={5}
                 placeholder="Select a user id..."
                 required
               />

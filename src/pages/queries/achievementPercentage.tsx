@@ -36,7 +36,7 @@ const AchievementPercentagePage: React.FC = () => {
                 value={gameId}
                 onChange={(e) => setGameId(+e.currentTarget.value)}
                 min={1}
-                max={10}
+                max={3}
                 placeholder="Select a game id..."
                 required
               />

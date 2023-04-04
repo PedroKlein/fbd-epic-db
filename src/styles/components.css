@@ -10,7 +10,7 @@ html {
 }
 
 main {
-  @apply flex flex-col p-8 mx-auto w-full;
+  @apply flex flex-col p-8 mx-auto w-full bg-slate-900;
   height: 100vh;
 }
 
