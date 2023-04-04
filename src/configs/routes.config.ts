@@ -35,4 +35,9 @@ export const ROUTES: Routes[] = [
     path: "/queries/priceProducts",
     withParams: true,
   },
+  {
+    name: "Insert Purchase",
+    path: "/queries/insertPurchase",
+    withParams: true,
+  },
 ];

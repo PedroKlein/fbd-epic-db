@@ -23,8 +23,8 @@ const BundleProductsPage: React.FC = () => {
 
   return (
     <ResultPage
-      title="Game Complete"
-      description="Gets all essential information about a game."
+      title="Price Products"
+      description="Gets all products that are above a certain price from a region"
     >
       <div className="flex flex-col gap-4">
         <form className="flex flex-row justify-between">

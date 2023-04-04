@@ -15,23 +15,17 @@ SELECT
 FROM prices;
 
 --procedure insert purchased game in library
-create or replace function library_insertion_procedure()
-RETURNS TRIGGER
-language plpgsql
-as $$
-declare
-   _game_id int;
-begin
-    IF (NEW.TYPE = 'GAME') THEN
-                    SELECT g.game_id INTO _game_id  FROM games g WHERE g.product_id= NEW.product_id;
-            INSERT INTO 
-                    library (user_id, _game_id, favourite)
-                    VALUES
-                    (NEW.user_id, game, false);
-                END IF;
-
-    commit;
-end;$$
+CREATE OR REPLACE FUNCTION library_insertion_procedure() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.product_id IN (
+        SELECT product_id FROM products WHERE type = 'GAME'
+    ) THEN
+        INSERT INTO library (user_id, game_id)
+        VALUES (NEW.user_id, NEW.product_id);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 --trigger when insert in purchase
 CREATE TRIGGER library_insertion_trigger
