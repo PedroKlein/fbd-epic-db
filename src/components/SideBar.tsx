@@ -1,18 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
-import { AiFillHome } from "react-icons/ai";
-
-type Routes = {
-  name: string;
-  path: string;
-  withParams?: boolean;
-};
-
-const ROUTES: Routes[] = [
-  { name: "Home", path: "/" },
-  { name: "Average Rating", path: "/averageRating", withParams: true },
-];
+import { ROUTES, Routes } from "../configs/routes.config";
 
 const NavItem: React.FC<Routes> = ({ name, path, withParams }) => {
   const { pathname } = useRouter();

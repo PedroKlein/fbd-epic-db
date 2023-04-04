@@ -10,7 +10,7 @@ html {
 }
 
 main {
-  @apply flex flex-col p-4 mx-auto justify-center items-center w-full;
+  @apply flex flex-col p-8 mx-auto w-full;
   height: 100vh;
 }
 

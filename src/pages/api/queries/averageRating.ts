@@ -3,14 +3,14 @@ import { apiHandler } from "@/utils/api/api.handler";
 import DBConnection from "@/db";
 import createHttpError from "http-errors";
 
-export type RatingGameRes = {
+export type AverageRatingRes = {
   game_id: number;
   product_id: number;
   title: string;
   average: number;
 };
 
-async function ratingGames(req: NextApiRequest, res: NextApiResponse) {
+async function averageRating(req: NextApiRequest, res: NextApiResponse) {
   const { rating } = req.query;
 
   if (Array.isArray(rating)) throw new createHttpError.BadRequest();
@@ -25,5 +25,5 @@ async function ratingGames(req: NextApiRequest, res: NextApiResponse) {
 }
 
 export default apiHandler({
-  GET: ratingGames,
+  GET: averageRating,
 });
